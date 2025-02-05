@@ -1,13 +1,35 @@
-# Function to add two numbers
-def add_numbers(a, b):
-    return a + b
-
-# Taking user input
-num1 = float(input("Enter first number: "))
-num2 = float(input("Enter second number: "))
-
-# Calculating sum
-sum_result = add_numbers(num1, num2)
-
-# Displaying the result
-print(f"The sum of {num1} and {num2} is {sum_result}")
+trigger: 
+- main 
+ 
+pool: 
+  vmImage: 'ubuntu-latest' 
+ 
+steps: 
+# Install Python (required for running a simple HTTP server) 
+- task: UsePythonVersion@0 
+  inputs: 
+    versionSpec: '3.x' 
+    addToPath: true 
+  displayName: 'Install Python' 
+ 
+# Create an HTML file (if not already in your repository) 
+- script: | 
+    echo '<!DOCTYPE html> 
+    <html lang="en"> 
+    <head> 
+        <meta charset="UTF-8"> 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <title>Hello World</title> 
+    </head> 
+    <body> 
+        <h1>Hello, World!</h1> 
+    </body> 
+    </html>' > index.html 
+  displayName: 'Create HTML File' 
+ 
+# Serve the HTML file using Python's HTTP server 
+- script: | 
+    python3 -m http.server 8080 & 
+    sleep 10 
+    curl http://localhost:8080/index.html 
+  displayName: 'Serve and Access HTML File'
